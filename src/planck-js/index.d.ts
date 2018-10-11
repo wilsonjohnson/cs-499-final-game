@@ -2,7 +2,7 @@
 // Project: http://piqnt.com/planck.js/
 // Definitions by: Oliver Zell <https://github.com/zOadT>
 // TypeScript Version: 3.0
-import 'planck-js';
+import './index.js';
 
 // Types
 declare module 'planck-js';

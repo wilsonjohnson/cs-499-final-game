@@ -108,10 +108,13 @@ world.on( 'begin-contact', contact => {
 // world.on( 'pre-solve', contact => console.log( contact ) );
 
 let i = 0;
+let original = { width, height };
 window.addEventListener( 'resize', ( event ) => {
+	
 	const width = window.innerWidth;
 	const height = window.innerHeight;
 	renderer.resize( width, height );
+	stage.scale.set( width / original.width , height / original.height );
 } );
 
 // set a fill and line style
