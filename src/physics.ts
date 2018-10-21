@@ -371,7 +371,7 @@ class PixiPlankCreator <T extends BodyType> {
 	public createLine( start: Point, end: Point, lineStyle: LineStyle ): PhysicsGraphics;
 	public createLine( start: Coordinate, end: Coordinate, lineStyle: LineStyle ): PhysicsGraphics;
 	public createLine( start: Coordinate | Vec2 | Point, end: Coordinate | Vec2 | Point, lineStyle?: LineStyle ): PhysicsGraphics {
-		// const line = new Line( start, end );
+		//#region type-checking
 		let startVec2: Vec2;
 		let endVec2: Vec2;
 		if( !isVec2( start ) ) {
@@ -384,15 +384,24 @@ class PixiPlankCreator <T extends BodyType> {
 		} else {
 			endVec2 = new Vec2( end );
 		}
+		//#endregion type-checking
+
+		// Create a new Line with the passed in coordinates
 		const line = new Line( startVec2, endVec2 );
 
+		// Clone and scale line to the plank version
 		const planckLine = line.clone().centerAtOrigin().scale( this.planckScale );
 
+		// Create the planck Edge object using the scaled line
 		let edge = new Edge( planckLine.start, planckLine.end );
 
+		// Create the physics body
 		let graphics = new PhysicsGraphics( this.scale, this.world, this.type, 'center', edge );
 
+		// Create a centered line for rendering
 		const origin = line.clone().centerAtOrigin();
+
+		// Apply stylings for renderer
 		if( lineStyle ) {
 			graphics.lineStyle( 
 				lineStyle.lineWidth,
@@ -401,13 +410,18 @@ class PixiPlankCreator <T extends BodyType> {
 				lineStyle.alignment
 			);
 		}
+
+		// Move the graphics start point for the draw call
 		graphics.moveTo( origin.start.x, origin.start.y );
+		// Draw a line to the endpoint
 		graphics.lineTo( origin.end.x, origin.end.y );
 
+		// Instantiate the collision object
 		graphics.setCollision();
+
+		// Translate to the center
 		graphics.translateTo( line.midpoint.x, line.midpoint.y );
-		// planckLine.translate( Vec2.mul( line.midpoint, this.planckScale ) );
-		
+
 		return graphics;
 	}
 
@@ -416,21 +430,7 @@ class PixiPlankCreator <T extends BodyType> {
 		
 		let padding = lineStyle && lineStyle.lineWidth ? lineStyle.lineWidth : 0;
 
-		// let scaled = {
-		// 	width: width / this.scale,
-		// 	height: height / this.scale
-		// }
-
 		let halfScale = ( this.scale * 2 );
-		// let points = [
-		// 	new Vec2({ x: 0, y: 0 }),
-		// 	new Vec2({ x: scaled.width, y: 0 }),
-		// 	new Vec2({ x: scaled.width, y: scaled.height }),
-		// 	new Vec2({ x: 0, y: scaled.height }),
-		// ].map( x => x.sub( new Vec2( width / halfScale, height / halfScale )));
-
-		// let a = new Polygon( points );
-		
 
 		let box = new Box( ( width + padding ) / halfScale, ( height + padding ) / halfScale, Vec2.zero() );
 
@@ -444,7 +444,6 @@ class PixiPlankCreator <T extends BodyType> {
 	public createCircle( radius: number, { x, y }: Coordinate | Vec2 | Point, fillStyle?: FillStyle, lineStyle?: LineStyle ): PhysicsGraphics {
 		let padding = lineStyle && lineStyle.lineWidth ? lineStyle.lineWidth / 2 : 0;
 
-		
 		let circle = new Circle( ( radius + padding ) / this.scale );
 		let graphics = this.setupGraphics( circle, fillStyle, lineStyle );
 
